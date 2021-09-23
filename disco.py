@@ -37,7 +37,7 @@ class Brightness:
     current = FileProperty(FileVar('/sys/class/backlight/intel_backlight/brightness', int))
 
     def __init__(self):
-        self._start = int(self.current)
+        self._start = self.current
 
     @property
     def value(self) -> Decimal:
