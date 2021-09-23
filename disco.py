@@ -36,7 +36,7 @@ class Brightness:
     maximal = FileProperty(FileVar('/sys/class/backlight/intel_backlight/max_brightness', int))
     current = FileProperty(FileVar('/sys/class/backlight/intel_backlight/brightness', int))
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._start = self.current
 
     @property
@@ -47,18 +47,18 @@ class Brightness:
     def value(self, v) -> None:
         self.current = int(v * self.maximal)
 
-    def restore(self):
+    def restore(self) -> None:
         self.current = self._start
 
 
 class Player:
-    def __init__(self, sound_path: str = './siren.mp3'):
+    def __init__(self, sound_path: str = './siren.mp3') -> None:
         self._player = vlc.MediaPlayer(sound_path)
 
-    def play(self):
+    def play(self) -> None:
         self._player.play()
 
-    def stop(self):
+    def stop(self) -> None:
         self._player.stop()
 
 
