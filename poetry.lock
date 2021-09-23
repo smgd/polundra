@@ -1,0 +1,18 @@
+[[package]]
+name = "python-vlc"
+version = "3.0.12118"
+description = "VLC bindings for python."
+category = "main"
+optional = false
+python-versions = "*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.9"
+content-hash = "7eefd101b2287a7d51aae4b4d5f29a5e74dd8f20e6d161567c3352c7114e8063"
+
+[metadata.files]
+python-vlc = [
+    {file = "python-vlc-3.0.12118.tar.gz", hash = "sha256:566f2f7c303f6800851cacc016df1c6eeec094ad63e0a49d87db9d698094f1fb"},
+    {file = "python_vlc-3.0.12118-py3-none-any.whl", hash = "sha256:f88be06c6f819a4db2de1c586b193b5df1410ff10fca33b8c6f4e56037c46f7b"},
+]
