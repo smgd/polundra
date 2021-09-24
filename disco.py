@@ -1,15 +1,14 @@
-from decimal import Decimal
-from pathlib import Path
-from typing import Type, Any
-
 import asyncio
 import math
-import os
-import pulsectl
 import signal
 import time
 import uuid
 import wave
+from decimal import Decimal
+from pathlib import Path
+from typing import Type, Any
+
+import pulsectl
 
 
 class FileVar:
@@ -41,8 +40,6 @@ class Brightness:
     maximal = FileProperty(FileVar('/sys/class/backlight/intel_backlight/max_brightness', int))
     current = FileProperty(FileVar('/sys/class/backlight/intel_backlight/brightness', int))
 
-
-
     @property
     def value(self) -> Decimal:
         return Decimal(self.current) / Decimal(self.maximal)
@@ -52,9 +49,9 @@ class Brightness:
         self.current = int(v * self.maximal)
 
 
-
 def f(v):
     return 0.05 + 0.95 * (0.5 + 0.45 * math.sin(2 * math.pi * v))
+
 
 def itertime():
     return iter(time.monotonic, 0)
@@ -76,23 +73,22 @@ class Pulse(pulsectl.Pulse):
     async def __aexit__(self, *exc_info):
         await asyncio.to_thread(self.__exit__, *exc_info)
 
-
     async def upload_sample(self, filename, name):
         return await asyncio.to_thread(self._upload_sample, filename, name)
 
-    def _upload_sample(self, filename, name):
+    @staticmethod
+    def _upload_sample(filename, name):
         import subprocess
         with subprocess.Popen(['pactl', 'upload-sample', filename, name]) as proc:
             proc.wait()
 
-
-    async def play_sample(self, name):
+    async def play_sample(self, name, *_, **__):
         return await asyncio.to_thread(super().play_sample, name)
+
 
 def read_wav_info(path) -> wave._wave_params:
     with wave.open(path) as wav:
         return wav.getparams()
-
 
 
 async def audio_alert(event, path='alert.wav'):
@@ -107,11 +103,13 @@ async def audio_alert(event, path='alert.wav'):
             await pa.play_sample(sample_name)
             await asyncio.sleep(delay)
 
+
 def toggle(event):
     if event.is_set():
         event.clear()
     else:
         event.set()
+
 
 async def main():
     event = asyncio.Event()
@@ -119,5 +117,6 @@ async def main():
     loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle(event))
     await asyncio.gather(audio_alert(event), visual_alert(event))
 
+
 if __name__ == '__main__':
-    asyncio.run(main(), debug=1)
+    asyncio.run(main(), debug=True)
