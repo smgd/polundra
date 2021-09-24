@@ -1,7 +1,15 @@
 [[package]]
-name = "python-vlc"
-version = "3.0.12118"
-description = "VLC bindings for python."
+name = "pulsectl"
+version = "21.9.1"
+description = "Python high-level interface and ctypes-based bindings for PulseAudio (libpulse)"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "wave"
+version = "0.0.2"
+description = "Whole Architecture Verification"
 category = "main"
 optional = false
 python-versions = "*"
@@ -9,10 +17,14 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "7eefd101b2287a7d51aae4b4d5f29a5e74dd8f20e6d161567c3352c7114e8063"
+content-hash = "b0448e6bec595c9840526c119a35fdff8c258250243a97cd7033238b5924fa5f"
 
 [metadata.files]
-python-vlc = [
-    {file = "python-vlc-3.0.12118.tar.gz", hash = "sha256:566f2f7c303f6800851cacc016df1c6eeec094ad63e0a49d87db9d698094f1fb"},
-    {file = "python_vlc-3.0.12118-py3-none-any.whl", hash = "sha256:f88be06c6f819a4db2de1c586b193b5df1410ff10fca33b8c6f4e56037c46f7b"},
+pulsectl = [
+    {file = "pulsectl-21.9.1-py2.py3-none-any.whl", hash = "sha256:594cf0eab87c9e1e8e348e9227e28b83c2f083b1c94395511403de33eecffc56"},
+    {file = "pulsectl-21.9.1.tar.gz", hash = "sha256:8eef4dbfc97d984e63fd609a3f690d005173ec5342be88d10f67dd507affdf32"},
+]
+wave = [
+    {file = "Wave-0.0.2.tar.gz", hash = "sha256:5a895bb85e04e38c82dba90d66a5ae8f488b50c58f3fc4df868a5bcdcabb8632"},
+    {file = "Wave-0.0.2.zip", hash = "sha256:5187f49497287d218cc83d4cd1e5299dc31485ab3ed32abbaa9e95d8f73c4095"},
 ]

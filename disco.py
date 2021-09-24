@@ -99,7 +99,7 @@ async def audio_alert(path='alert.wav'):
 
         await pa.upload_sample(path, sample_name)
         info = await asyncio.to_thread(read_wav_info, path)
-        delay = info.nframes / info.framerate / info.nchannels
+        delay = info.nframes / info.framerate
         while True:
             await pa.play_sample(sample_name)
             await asyncio.sleep(delay)
