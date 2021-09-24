@@ -93,7 +93,7 @@ def read_wav_info(path) -> wave._wave_params:
 
 
 
-async def audio_alert(path='/home/madbird/alert.wav'):
+async def audio_alert(path='alert.wav'):
     async with Pulse() as pa:
         sample_name = str(uuid.uuid4())
 
