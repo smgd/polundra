@@ -6,6 +6,7 @@ import asyncio
 import math
 import os
 import pulsectl
+import signal
 import time
 import uuid
 import wave
@@ -59,9 +60,10 @@ def itertime():
     return iter(time.monotonic, 0)
 
 
-async def visual_alert():
+async def visual_alert(event):
     brightness = Brightness()
     for v in map(f, itertime()):
+        await event.wait()
         await asyncio.to_thread(setattr, brightness, 'value', v)
         await asyncio.sleep(1/60)
 
@@ -93,7 +95,7 @@ def read_wav_info(path) -> wave._wave_params:
 
 
 
-async def audio_alert(path='alert.wav'):
+async def audio_alert(event, path='alert.wav'):
     async with Pulse() as pa:
         sample_name = str(uuid.uuid4())
 
@@ -101,13 +103,21 @@ async def audio_alert(path='alert.wav'):
         info = await asyncio.to_thread(read_wav_info, path)
         delay = info.nframes / info.framerate
         while True:
+            await event.wait()
             await pa.play_sample(sample_name)
             await asyncio.sleep(delay)
 
-
+def toggle(event):
+    if event.is_set():
+        event.clear()
+    else:
+        event.set()
 
 async def main():
-    await asyncio.gather(audio_alert(), visual_alert())
+    event = asyncio.Event()
+    loop = asyncio.get_running_loop()
+    loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle(event))
+    await asyncio.gather(audio_alert(event), visual_alert(event))
 
 if __name__ == '__main__':
     asyncio.run(main(), debug=1)
