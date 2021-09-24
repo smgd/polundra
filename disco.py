@@ -1,6 +1,7 @@
 import asyncio
 import math
 import signal
+import subprocess
 import time
 import uuid
 import wave
@@ -78,7 +79,6 @@ class Pulse(pulsectl.Pulse):
 
     @staticmethod
     def _upload_sample(filename, name):
-        import subprocess
         with subprocess.Popen(['pactl', 'upload-sample', filename, name]) as proc:
             proc.wait()
 
