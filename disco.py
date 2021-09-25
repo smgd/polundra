@@ -6,6 +6,7 @@ import time
 import uuid
 import wave
 from decimal import Decimal
+from functools import partial
 from pathlib import Path
 from typing import cast, Type, Any
 
@@ -107,7 +108,9 @@ class ScreenBrightness:
         self.current = int(v * self.maximal)
 
 
-def f(v):
+def f(v, for_keyboard=False):
+    if for_keyboard:
+        return 0.05 + math.sin(0.5 * math.pi + 2 * math.pi * v)
     return 0.05 + 0.95 * (0.5 + 0.45 * math.sin(2 * math.pi * v))
 
 
@@ -142,7 +145,7 @@ def read_wav_info(path) -> wave._wave_params:
 
 async def keyboard_alert(event):
     brightness = DBusBrightnessManager(**DBUS_BACKENDS['upower'])
-    for v in map(f, itertime()):
+    for v in map(partial(f, for_keyboard=True), itertime()):
         await event.wait()
         await asyncio.to_thread(setattr, brightness, 'value', v)
         await asyncio.sleep(1 / 60)
