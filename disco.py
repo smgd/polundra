@@ -183,9 +183,14 @@ async def main():
     event = asyncio.Event()
     event.set()
     loop = asyncio.get_running_loop()
+    current_task = asyncio.current_task()
     loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle(event))
-    await asyncio.gather(audio_alert(event), keyboard_alert(event), screen_alert(event))
+    loop.add_signal_handler(signal.SIGINT, lambda *_: loop.call_soon(current_task.cancel))
 
+    try:
+        await asyncio.gather(audio_alert(event), keyboard_alert(event), screen_alert(event))
+    except asyncio.CancelledError:
+        exit()
 
 if __name__ == '__main__':
     asyncio.run(main(), debug=cast(bool, int(True)))
