@@ -1,16 +1,15 @@
-from decimal import Decimal
-from pathlib import Path
-from typing import Type, Any
 import asyncio
-import dbus
 import math
-import os
-import pulsectl
 import signal
+import subprocess
 import time
 import uuid
 import wave
+from decimal import Decimal
+from typing import cast
 
+import dbus
+import pulsectl
 
 DBUS_BACKENDS = {
     'systemd': {
@@ -20,7 +19,7 @@ DBUS_BACKENDS = {
         'getter': 'GetBrightness',
         'setter': 'SetBrightness',
         # 'max_getter': 'GetMaxBrightness',
-    },        
+    },
     'gnome': {
         'name': 'org.gnome.SettingsDaemon.Power',
         'path': '/org/gnome/SettingsDaemon/Power',
@@ -47,14 +46,14 @@ class DBusBrightnessManager:
         self.getter = getattr(self.iface, getter)
         self.setter = getattr(self.iface, setter)
         self.max_getter = getattr(self.iface, max_getter) if max_getter else (lambda: 100)
-        
+
     @property
     def current(self) -> int:
         return self.getter()
 
     @current.setter
     def current(self, value: int) -> None:
-        return self.setter(value)
+        self.setter(value)
 
     @property
     def maximum(self) -> int:
@@ -89,8 +88,10 @@ class Brightness:
         except:
             pass
 
+
 def f(v):
     return 0.05 + 0.95 * (0.5 + 0.45 * math.sin(2 * math.pi * v))
+
 
 def itertime():
     return iter(time.monotonic, 0)
@@ -101,7 +102,7 @@ async def visual_alert(event):
     for v in map(f, itertime()):
         await event.wait()
         await asyncio.to_thread(setattr, brightness, 'value', v)
-        await asyncio.sleep(1/60)
+        await asyncio.sleep(1 / 60)
 
 
 class Pulse(pulsectl.Pulse):
@@ -112,23 +113,21 @@ class Pulse(pulsectl.Pulse):
     async def __aexit__(self, *exc_info):
         await asyncio.to_thread(self.__exit__, *exc_info)
 
-
     async def upload_sample(self, filename, name):
         return await asyncio.to_thread(self._upload_sample, filename, name)
 
-    def _upload_sample(self, filename, name):
-        import subprocess
+    @staticmethod
+    def _upload_sample(filename, name):
         with subprocess.Popen(['pactl', 'upload-sample', filename, name]) as proc:
             proc.wait()
 
+    async def play_sample(self, name, *__, **___):
+        return await asyncio.to_thread(super().play_sample, name, *__, **___)
 
-    async def play_sample(self, name):
-        return await asyncio.to_thread(super().play_sample, name)
 
 def read_wav_info(path) -> wave._wave_params:
     with wave.open(path) as wav:
         return wav.getparams()
-
 
 
 async def audio_alert(event, path='alert.wav'):
@@ -143,11 +142,13 @@ async def audio_alert(event, path='alert.wav'):
             await pa.play_sample(sample_name)
             await asyncio.sleep(delay)
 
+
 def toggle(event):
     if event.is_set():
         event.clear()
     else:
         event.set()
+
 
 async def main():
     event = asyncio.Event()
@@ -156,5 +157,6 @@ async def main():
     loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle(event))
     await asyncio.gather(audio_alert(event), visual_alert(event))
 
+
 if __name__ == '__main__':
-    asyncio.run(main(), debug=1)
+    asyncio.run(main(), debug=cast(bool, int(True)))
