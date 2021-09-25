@@ -193,4 +193,4 @@ async def main():
         exit()
 
 if __name__ == '__main__':
-    asyncio.run(main(), debug=cast(bool, int(True)))
+    asyncio.run(main(), debug=bool(int(cast(bool, int(True)))))
