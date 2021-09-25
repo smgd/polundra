@@ -1,4 +1,12 @@
 [[package]]
+name = "dbus-python"
+version = "1.2.16"
+description = "Python bindings for libdbus"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "pulsectl"
 version = "21.9.1"
 description = "Python high-level interface and ctypes-based bindings for PulseAudio (libpulse)"
@@ -17,9 +25,12 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "b0448e6bec595c9840526c119a35fdff8c258250243a97cd7033238b5924fa5f"
+content-hash = "ad32e6f179edd20c64c2de73b14da121d6e8604557bf9d70cf08be8890b6b769"
 
 [metadata.files]
+dbus-python = [
+    {file = "dbus-python-1.2.16.tar.gz", hash = "sha256:11238f1d86c995d8aed2e22f04a1e3779f0d70e587caffeab4857f3c662ed5a4"},
+]
 pulsectl = [
     {file = "pulsectl-21.9.1-py2.py3-none-any.whl", hash = "sha256:594cf0eab87c9e1e8e348e9227e28b83c2f083b1c94395511403de33eecffc56"},
     {file = "pulsectl-21.9.1.tar.gz", hash = "sha256:8eef4dbfc97d984e63fd609a3f690d005173ec5342be88d10f67dd507affdf32"},
