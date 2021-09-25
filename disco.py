@@ -142,7 +142,7 @@ def read_wav_info(path) -> wave._wave_params:
 
 async def keyboard_alert(event):
     brightness = DBusBrightnessManager(**DBUS_BACKENDS['upower'])
-    for v in map(f2, itertime()):
+    for v in map(f, itertime()):
         await event.wait()
         await asyncio.to_thread(setattr, brightness, 'value', v)
         await asyncio.sleep(1 / 60)
