@@ -94,7 +94,7 @@ class FileProperty:
         self.var.set(value)
 
 
-class DirectBrightnessManager:
+class ScreenBrightness:
     maximal = FileProperty(FileVar('/sys/class/backlight/intel_backlight/max_brightness', int))
     current = FileProperty(FileVar('/sys/class/backlight/intel_backlight/brightness', int))
 
@@ -107,41 +107,12 @@ class DirectBrightnessManager:
         self.current = int(v * self.maximal)
 
 
-class Brightness:
-    def __init__(self):
-        self.kbd = DBusBrightnessManager(**DBUS_BACKENDS['upower'])
-        self.scr = DirectBrightnessManager()
-
-    @property
-    def value(self):
-        return self.scr.value
-
-    @value.setter
-    def value(self, v):
-        try:
-            self.kbd.value = v
-        except:
-            pass
-        try:
-            self.scr.value = v
-        except:
-            pass
-
-
 def f(v):
     return 0.05 + 0.95 * (0.5 + 0.45 * math.sin(2 * math.pi * v))
 
 
 def itertime():
     return iter(time.monotonic, 0)
-
-
-async def visual_alert(event):
-    brightness = Brightness()
-    for v in map(f, itertime()):
-        await event.wait()
-        await asyncio.to_thread(setattr, brightness, 'value', v)
-        await asyncio.sleep(1 / 60)
 
 
 class Pulse(pulsectl.Pulse):
@@ -169,6 +140,22 @@ def read_wav_info(path) -> wave._wave_params:
         return wav.getparams()
 
 
+async def keyboard_alert(event):
+    brightness = DBusBrightnessManager(**DBUS_BACKENDS['upower'])
+    for v in map(f2, itertime()):
+        await event.wait()
+        await asyncio.to_thread(setattr, brightness, 'value', v)
+        await asyncio.sleep(1 / 60)
+
+
+async def screen_alert(event):
+    brightness = ScreenBrightness()
+    for v in map(f, itertime()):
+        await event.wait()
+        await asyncio.to_thread(setattr, brightness, 'value', v)
+        await asyncio.sleep(1 / 60)
+
+
 async def audio_alert(event, path='alert.wav'):
     async with Pulse() as pa:
         sample_name = str(uuid.uuid4())
@@ -194,7 +181,7 @@ async def main():
     event.set()
     loop = asyncio.get_running_loop()
     loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle(event))
-    await asyncio.gather(audio_alert(event), visual_alert(event))
+    await asyncio.gather(audio_alert(event), keyboard_alert(event), screen_alert(event))
 
 
 if __name__ == '__main__':
