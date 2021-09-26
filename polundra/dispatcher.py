@@ -1,6 +1,8 @@
 import asyncio
 import signal
 import uuid
+import logging
+
 from functools import partial
 
 from polundra.audio.pulse import Pulse
@@ -10,15 +12,20 @@ from polundra.visual.dbus import DBUS_BACKENDS, DBusManager
 from polundra.visual.functions import f_kbd, f_scr
 from polundra.visual.screen import ScreenBrightness
 
+logger = logging.getLogger(__name__)
+
+def _update_backend(backend, value):
+    backend.value = value
 
 async def run_backend(event, f, backend):
+
     for x in itertime():
-        y = f(x)
-        print(backend, x, y)
         await event.wait()
-        await asyncio.to_thread(setattr, backend, 'value', y)
+        y = f(x)
+        logger.debug(f'set backend {backend!r} to f({x!r}) = {y!r}')
+        await asyncio.to_thread(_update_backend, ackend, y)
         await asyncio.sleep(1 / 60)
-    
+
 
 async def keyboard_alert(event):
     fuck = DBusManager(**DBUS_BACKENDS['upower'])
@@ -55,6 +62,6 @@ async def run():
     coros = [b(event) for b in backends]
     tasks = [asyncio.create_task(coro) for coro in coros]
     try:
-        await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED) 
+        await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
     except asyncio.CancelledError:
         exit()
