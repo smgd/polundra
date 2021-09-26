@@ -2,7 +2,6 @@ from decimal import Decimal
 
 import dbus
 
-
 DBUS_BACKENDS = {
     'systemd': {
         'name': 'org.freedesktop.login1',
