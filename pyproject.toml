@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "polundra"
-version = "0.1.1"
+version = "0.1.2"
 description = "An extended alert notifier."
 authors = ["Artur Svistunov <poopa@example.com>", "Ilya Zakharov <loopa@example.com"]
 license = "MIT"
+repository = "https://github.com/smgd/polundra"
 
 [tool.poetry.dependencies]
 python = "^3.9"
