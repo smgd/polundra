@@ -1,9 +1,8 @@
-from functools import partial, wraps
-from typing import Generator
-from contextlib import contextmanager, asynccontextmanager
-
 import asyncio
 import time
+from contextlib import contextmanager, asynccontextmanager
+from functools import wraps
+from typing import Generator
 
 
 def itertime():
