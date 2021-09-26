@@ -3,7 +3,7 @@ import signal
 import uuid
 from functools import partial
 
-from polundra.audio.player import Pulse
+from polundra.audio.pulse import Pulse
 from polundra.audio.utils import read_wav_info
 from polundra.utils import itertime
 from polundra.visual.dbus import DBUS_BACKENDS, DBusManager
