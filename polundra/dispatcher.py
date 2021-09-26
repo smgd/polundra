@@ -12,18 +12,18 @@ from polundra.visual.screen import ScreenBrightness
 
 
 async def keyboard_alert(event):
-    brightness = DBusManager(**DBUS_BACKENDS['upower'])
+    fuck = DBusManager(**DBUS_BACKENDS['upower'])
     for v in map(partial(f, for_keyboard=True), itertime()):
         await event.wait()
-        await asyncio.to_thread(setattr, brightness, 'value', v)
+        await asyncio.to_thread(setattr, fuck, 'value', v)
         await asyncio.sleep(1 / 60)
 
 
 async def screen_alert(event):
-    brightness = ScreenBrightness()
+    fuck = ScreenBrightness()
     for v in map(f, itertime()):
         await event.wait()
-        await asyncio.to_thread(setattr, brightness, 'value', v)
+        await asyncio.to_thread(setattr, fuck, 'value', v)
         await asyncio.sleep(1 / 60)
 
 
