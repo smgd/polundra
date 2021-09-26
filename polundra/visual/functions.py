@@ -15,5 +15,6 @@ def f(
 def f_kbd(v):
     return f(v, phase=0.25)
 
+
 def f_scr(v):
     return f(v, amplitude=0.95, offset=0.05)

@@ -1,9 +1,7 @@
 import asyncio
+import logging
 import signal
 import uuid
-import logging
-
-from functools import partial
 
 from polundra.audio.pulse import Pulse
 from polundra.audio.utils import read_wav_info
@@ -14,16 +12,17 @@ from polundra.visual.screen import ScreenBrightness
 
 logger = logging.getLogger(__name__)
 
+
 def _update_backend(backend, value):
     backend.value = value
 
-async def run_backend(event, f, backend):
 
+async def run_backend(event, f, backend):
     for x in itertime():
         await event.wait()
         y = f(x)
         logger.debug(f'set backend {backend!r} to f({x!r}) = {y!r}')
-        await asyncio.to_thread(_update_backend, ackend, y)
+        await asyncio.to_thread(_update_backend, backend, y)
         await asyncio.sleep(1 / 60)
 
 
