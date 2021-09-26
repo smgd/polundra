@@ -1,8 +1,9 @@
 [tool.poetry]
-name = "disco"
+name = "polundra"
 version = "0.1.0"
-description = ""
-authors = ["Your Name <you@example.com>"]
+description = "An extended alert notifier."
+authors = ["Artur Svistunov <poopa@example.com>", "Ilya Zakharov <loopa@example.com"]
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.9"
