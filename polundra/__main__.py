@@ -3,5 +3,10 @@ from typing import cast
 
 from polundra import dispatcher
 
-if __name__ == '__main__':
+
+def main():
     asyncio.run(dispatcher.run(), debug=bool(int(cast(bool, int(True)))))
+
+
+if __name__ == '__main__':
+    main()
