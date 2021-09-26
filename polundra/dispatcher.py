@@ -47,7 +47,7 @@ def toggle(event):
         event.set()
 
 
-async def main():
+async def run():
     event = asyncio.Event()
     event.set()
     loop = asyncio.get_running_loop()
