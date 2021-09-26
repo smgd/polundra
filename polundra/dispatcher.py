@@ -5,13 +5,13 @@ import uuid
 
 from polundra.audio.pulse import Pulse
 from polundra.audio.utils import read_wav_info
-from polundra.utils import itertime, toggle_event
 from polundra.visual.dbus import DBUS_BACKENDS, DBusManager
 from polundra.visual.functions import f_kbd, f_scr
 from polundra.visual.screen import ScreenBrightness
-from .utils import restore_value_async, sync_to_async
+from .utils import itertime, toggle_event, restore_value_async, sync_to_async
 
 logger = logging.getLogger(__name__)
+
 
 @sync_to_async
 def _update_backend(backend, value):
