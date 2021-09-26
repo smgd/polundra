@@ -1,30 +1,40 @@
 import asyncio
 import signal
 import uuid
+import logging
+
 from functools import partial
 
 from polundra.audio.pulse import Pulse
 from polundra.audio.utils import read_wav_info
 from polundra.utils import itertime, toggle_event
 from polundra.visual.dbus import DBUS_BACKENDS, DBusManager
-from polundra.visual.functions import f
+from polundra.visual.functions import f_kbd, f_scr
 from polundra.visual.screen import ScreenBrightness
+
+logger = logging.getLogger(__name__)
+
+def _update_backend(backend, value):
+    backend.value = value
+
+async def run_backend(event, f, backend):
+
+    for x in itertime():
+        await event.wait()
+        y = f(x)
+        logger.debug(f'set backend {backend!r} to f({x!r}) = {y!r}')
+        await asyncio.to_thread(_update_backend, ackend, y)
+        await asyncio.sleep(1 / 60)
 
 
 async def keyboard_alert(event):
     fuck = DBusManager(**DBUS_BACKENDS['upower'])
-    for v in map(partial(f, for_keyboard=True), itertime()):
-        await event.wait()
-        await asyncio.to_thread(setattr, fuck, 'value', v)
-        await asyncio.sleep(1 / 60)
+    await run_backend(event, f_kbd, fuck)
 
 
 async def screen_alert(event):
     fuck = ScreenBrightness()
-    for v in map(f, itertime()):
-        await event.wait()
-        await asyncio.to_thread(setattr, fuck, 'value', v)
-        await asyncio.sleep(1 / 60)
+    await run_backend(event, f_scr, fuck)
 
 
 async def audio_alert(event, path='assets/alert.wav'):
@@ -48,7 +58,10 @@ async def run():
     loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle_event(event))
     loop.add_signal_handler(signal.SIGINT, lambda *_: loop.call_soon(current_task.cancel))
 
+    backends = audio_alert, keyboard_alert, screen_alert
+    coros = [b(event) for b in backends]
+    tasks = [asyncio.create_task(coro) for coro in coros]
     try:
-        await asyncio.gather(audio_alert(event), keyboard_alert(event), screen_alert(event))
+        await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
     except asyncio.CancelledError:
         exit()
