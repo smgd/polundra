@@ -5,7 +5,7 @@ from functools import partial
 
 from polundra.audio.pulse import Pulse
 from polundra.audio.utils import read_wav_info
-from polundra.utils import itertime
+from polundra.utils import itertime, toggle_event
 from polundra.visual.dbus import DBUS_BACKENDS, DBusManager
 from polundra.visual.functions import f
 from polundra.visual.screen import ScreenBrightness
@@ -40,19 +40,12 @@ async def audio_alert(event, path='assets/alert.wav'):
             await asyncio.sleep(delay)
 
 
-def toggle(event):
-    if event.is_set():
-        event.clear()
-    else:
-        event.set()
-
-
 async def run():
     event = asyncio.Event()
     event.set()
     loop = asyncio.get_running_loop()
     current_task = asyncio.current_task()
-    loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle(event))
+    loop.add_signal_handler(signal.SIGALRM, lambda *_: toggle_event(event))
     loop.add_signal_handler(signal.SIGINT, lambda *_: loop.call_soon(current_task.cancel))
 
     try:
