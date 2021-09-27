@@ -3,6 +3,8 @@ import logging
 import signal
 import uuid
 
+import aiofiles
+
 from polundra.audio.pulse import Pulse
 from polundra.audio.utils import read_wav_info
 from polundra.visual.dbus import DBUS_BACKENDS, DBusManager
@@ -39,16 +41,18 @@ async def screen_alert(event):
 
 
 async def audio_alert(event, path='assets/alert.wav'):
-    async with Pulse() as pa:
-        sample_name = str(uuid.uuid4())
+    async with aiofiles.tempfile.NamedTemporaryFile('rwb') as alert_file:
+        # implement me
+        async with Pulse() as pa:
+            sample_name = str(uuid.uuid4())
 
-        await pa.upload_sample(path, sample_name)
-        info = await asyncio.to_thread(read_wav_info, path)
-        delay = info.nframes / info.framerate
-        while True:
-            await event.wait()
-            await pa.play_sample(sample_name)
-            await asyncio.sleep(delay)
+            await pa.upload_sample(path, sample_name)
+            info = await asyncio.to_thread(read_wav_info, path)
+            delay = info.nframes / info.framerate
+            while True:
+                await event.wait()
+                await pa.play_sample(sample_name)
+                await asyncio.sleep(delay)
 
 
 async def run():

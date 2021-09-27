@@ -11,6 +11,7 @@ readme = "README.md"
 python = "^3.9"
 pulsectl = "^21.9.1"
 dbus-python = "^1.2.16"
+aiofiles = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
 
